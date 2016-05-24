@@ -1,4 +1,6 @@
 #!flask/bin/python2
+# Copyright 2016 6WIND S.A.
+# LICENSE: Apache 2.0
 
 from subprocess import call,check_output
 from flask import jsonify, request, Flask, make_response
