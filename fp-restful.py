@@ -17,6 +17,15 @@ class Stats(Resource):
         return output
 
 #-------------------------------------------------------------------------------
+class CLI(Resource):
+    def get(self, command):
+        terms = request.args.getlist('term')
+        command_array = ["/usr/local/bin/fp-cli", command ]
+        command_array.extend(terms)
+        output = check_output(command_array)
+        return output
+
+#-------------------------------------------------------------------------------
 
 app = Flask(__name__)
 api = Api(app)
@@ -31,6 +40,7 @@ def not_found(error):
 ## Add app here
 api.add_resource(CpuUsage, '/fp-cpu-usage')
 api.add_resource(Stats, '/stats')
+api.add_resource(CLI, '/fp-cli/<command>')
 
 if __name__ == '__main__':
     app.run(host='localhost', debug=True)
