@@ -4,6 +4,14 @@ from subprocess import call,check_output
 from flask import jsonify, request, Flask, make_response
 from flask_restful import reqparse, abort, Api, Resource
 
+#-------------------------------------------------------------------------------
+class CpuUsage(Resource):
+    def get(self):
+        output = check_output(["/usr/local/bin/fp-cpu-usage", "-j"])
+        return output
+
+#-------------------------------------------------------------------------------
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -15,6 +23,7 @@ def not_found(error):
 
 
 ## Add app here
+api.add_resource(CpuUsage, '/fp-cpu-usage')
 
 if __name__ == '__main__':
     app.run(host='localhost', debug=True)
