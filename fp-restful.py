@@ -11,6 +11,12 @@ class CpuUsage(Resource):
         return output
 
 #-------------------------------------------------------------------------------
+class Stats(Resource):
+    def get(self):
+        output = check_output(["/usr/local/bin/fp-cli", "stats-json"])
+        return output
+
+#-------------------------------------------------------------------------------
 
 app = Flask(__name__)
 api = Api(app)
@@ -24,6 +30,7 @@ def not_found(error):
 
 ## Add app here
 api.add_resource(CpuUsage, '/fp-cpu-usage')
+api.add_resource(Stats, '/stats')
 
 if __name__ == '__main__':
     app.run(host='localhost', debug=True)
