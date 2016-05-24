@@ -45,37 +45,21 @@ class QueueStats(Resource):
 
     """
     def get(self):
-        result = []
-        ports = []
-        cur_port = None
-        fdisc = open('results', 'r')
-        for line in fdisc:
-            list_line = line.strip().split("|")
-            cur_result = []
-            if cur_port is None:
-                port = ["port"+list_line[0]]
-                cur_port = port
-                queue = ["queue"+list_line[1]]
-                queue_values = list_line[2:]
-                queue.append(queue_values)
-                cur_result.extend(port)
-                cur_result.append(queue)
-                result.append(cur_result)
-            elif cur_port == ["port"+list_line[0]]:
-                queue = ["queue"+list_line[1]]
-                queue_values = list_line[2:]
-                queue.append(queue_values)
-                result[-1].append(queue)
-            else:
-                port = ["port"+list_line[0]]
-                cur_port = port
-                queue = ["queue"+list_line[1]]
-                queue_values = list_line[2:]
-                queue.append(queue_values)
-                cur_result.extend(port)
-                cur_result.append(queue)
-                result.append(cur_result)
-        return result
+        result = {}
+        with open('results', 'r') as fdisc:
+            for line in fdisc:
+                port, queueid, total, used, tsc = map(int, line.strip().split("|"))
+                queue = {
+                    "total" : total,
+                    "used" : used,
+                    "tscp" : tsc,
+                }
+                if port in result:
+                    result[port][queueid] = queue
+                else:
+                    result[port] = {queueid : queue}
+
+        return jsonify(result)
 
 #-------------------------------------------------------------------------------
 
