@@ -2,6 +2,7 @@
 # Copyright 2016 6WIND S.A.
 # LICENSE: Apache 2.0
 
+from random import randint, choice
 from subprocess import call,check_output
 from flask import jsonify, request, Flask, make_response
 from flask_restful import reqparse, abort, Api, Resource
@@ -20,7 +21,27 @@ class Stats(Resource):
 
 #-------------------------------------------------------------------------------
 class CLI(Resource):
+
+    def _data_gen(self, filename):
+        try:
+            fdesc = open(filename, "w")
+        except:
+            print("error occured")
+            sys.exit(0)
+
+        desc_len = [128,256,512]
+        for port in range(0, randint(1,4)):
+            for queue in range(0, randint(1,4)):
+                total = choice(desc_len)
+                fdesc.write("%i|%i|%i|%i|%i\n" % (port, queue, total,
+                        randint(0, total), randint(0,10000)))
+        fdesc.close()
+        return "File filled randomly with success"
+
     def get(self, command):
+        if command == "gen":
+            return self._data_gen("results")
+
         terms = request.args.getlist('term')
         command_array = ["/usr/local/bin/fp-cli", command ]
         command_array.extend(terms)
